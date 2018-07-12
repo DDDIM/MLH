@@ -1,38 +1,34 @@
 
 Это форк плагина https://github.com/etcipnja/MLH с целью перевода.
 
-# Problem:
+# Задача:
 
-When you have to deal with a lot of plants you might be puzzled that you have to create a dedicated sequence for each
-instance of a plant. For example: if you have 10 carrots - you probably need to create a watering sequence for every carrot
-individually.
+Этот плагин придет на помощь когда нужно выполнить одно и то же действие для множества растений.  
 
-# Solution:
+# Решение:
 
-The idea is to write a loop that executes needed sequences for each eligible plant.
-- Apply filters to select plants to be treated       		(Example: Select all Carrots with status "planned")
-- Execute initial sequence                                  (Example: "Pick up seeder")
-- For each plant:
-    - Execute a sequence before moving to plant's location  (Example: "Grab a seed")
-    - Move to plant's location
-    - Execute a sequence at plant's location                (Example: "Plant a seed")
-    - Update plant meta 	                                (Example: "Mark this instance of carrot as "planted")
-- Execute end sequence                                      (Example: "Return seeder")
+Выполнять следующие действия:
 
-# Reference:
+- Применить фильтр для выбора нужных растений (например, выбрать все морковки (carrots) со статусом "Запланировано" (planned));
+- Выполнить начальную функцию (например, взять насадку для посадки);
+- Для каждого растения:
+    - Выполнить функцию перед движением к координате растения (например, схватить семечку);
+    - Переместиться к координате растения;
+    - Выполнить функцию, находять на координате растения;
+    - Обновить мета-данные растения (например, сменить статус морковок на "Посажено"  (planted));
+- Выполнить заключительную функцию (например, вернуть на базу насадку для посадки);
 
-- FILTER BY PLANT NAME
-    - Filter by plant names (comma separated) for example "Carrot, Beets", case insensitive, '*' means select all
-    - You can negate search by providing '!' as the first element. For example "!, Carrot, Beets" selects all but
-    Carrots and Beets
-- FILTER BY META DATA
-    - Meta is a piece of information (key:value) saved with the plant. Unfortunately, you won't see it anywhere in
-    the Farm Designer, but it is printed to the log. This farmware can update metadata, so you can use it in the
-    filter later. See below about expected format and examples.
-- INIT SEQUENCE NAME
-    - Name of the sequence to be executed before anything (one time) or "None" to skip
-- SEQUENCE NAME BEFORE NEXT MOVE
-    - Sequence to be executed before the head moves to the plant (for every plant)
+# Подробное параметров:
+
+- Фильтр растений по имени
+    - Фильтровать растения по названиям (разделяем запятыми). Например: "Carrot, Beets", не зависит от регистра, '*' означает "Выбрать все"
+    - Можно инвертировать вывод, используя '!' как перывый элемент. Например "!, Carrot, Beets" позволяет выбрать все, кроме моркови и свеклы
+- Фильтр растений по мета-данным
+    - Мета-данные - это информация о растении в формате (ключ:значение), привязанная к данному экземпляру растения. К сожалению, её пока невозможно увидеть где-нибудь в Дизайнере грядки (кроме статуса). 
+- Начальная функция
+    - Имя функции, которая будет исполнена в самом начале. К сожалению, на данный момент, поддерживаются только англоязычные имена. Если ничего не должно исполняться, впишите "None".
+- Фукция перед движением к следующей точке
+    - Функция, которую следует исполнить перед перемещением головы FarmBot-а к следующему растению (исполняется для каждого растения);
 - SEQUENCE NAME AFTER MOVE
     - Sequence to be executed at plant's location (for every plant)
 - END SEQUENCE NAME
