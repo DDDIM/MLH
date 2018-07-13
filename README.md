@@ -44,7 +44,7 @@
 Формат полей мета-данных строго определен. На языке Python это называется список пар кортежей (list of tupple pairs). Вот пример:
 
 ```
-[ ( ‘key1’, ‘value1’ ) , ( ‘key2’, ‘value2’ ) ]
+[ ( ‘ключ1’, ‘значение1’ ) , ( ‘ключ2’, ‘значение2’ ) ]
 ```
 
 Вы можете использовать любые строки в качестве Ключа и Значения. 
@@ -53,140 +53,71 @@
 
 Есть несколько Ключей и Значений со специальным назначением:
 - Ключ 'plant_stage' не имеет отношения к мета-данным, вместо этого он работает с видимым для пользователя атрибутом "Статус";
-- Ключ 'planted_at' - тоже не является мета-данными, 
+- Ключ 'planted_at' - тоже не является мета-данными. Он содержит дату посадки растения. Формат: ГГГГ-ММ-ДД (Пример: "2018-04-15")
+- Запись Ключа 'del' приведет к удалению мета-данных для данного растения. Если Значение '*' - то все мета-данные будут удалены. Если нужно удалить конкретную пару, нужно ввести соответствующее название ключа.
+- Значение 'today' заменяется текущую дату. Для фильтрации, можно написать ‘!today’, что означает 'не сегодня'.
 
-There are special keys and values with special meaning:
-- key ‘plant_stage’ will not deal with metadata, instead it works with the attribute “Status” visible
-in Farm Designer for every plant. Only valid values that go with this key are ‘planned’, ‘planted’ and ‘harvested’
-- key 'planted_at' - also not stored in meta - this is the date when plant was planted. It's value shall be in the format
-YYYY-MM-DD (Example: "2018-04-15")
-- key ‘del’ in SAVE filed causes to delete existing meta data for this plant. If ‘value' is ‘*’ - all metadata is
-deleted, otherwise only one key specified in ‘value’ is deleted
-- value ‘today’ is replaced with actual today’s date. In FILTER you can write ‘!today’ which means “not today’.
+# Примеры:
 
-# Examples:
-
-Seed all "planned" Carrots and mark them "planted"
+Посадить всю морковку со статусом "запланировано" ("planned") и изменить ее статус на "посажено" ("planted"):
 ```
-- FILTER BY PLANT NAME:             Carrot
-- FILTER BY META DATA:              [('plant_stage','planned')]
-- INIT SEQUENCE NAME:               Pickup seeder  (or whatever the name you have)
-- SEQUENCE NAME BEFORE NEXT MOVE:   Pickup a seed
-- SEQUENCE NAME AFTER MOVE:         Plant a seed
-- END SEQUENCE NAME:                Return seeder
-- SAVE IN META DATA:                [('plant_stage','planted')]
+- Фильтр растений по имени:             Carrot
+- Фильтр растений по мета-данным:              [('plant_stage','planned')]
+- Начальная функция:               Pickup seeder  (имя функции должно быть на английском)
+- Функция перед движением к следующей точке:   Pickup a seed
+- Функция после движения к следующей точке:         Plant a seed
+- Заключительная функция:                Return seeder
+- Мета-данные для записи:                [('plant_stage','planted')]
 ```
 
-Please note that if you interrupt this sequence and restart it - it won't start seeding again from the beginning because
-already seeded plants are marked as "planted" and won't be selected again in the next run.
+Имейте ввиду, что если вы прервете и перезапустите исполнение плагина, он продолжит сажать с того места, где остановился, потому что у посаженных растений статус сменится на "посажено" ("planted"). 
 
 
-Water all "planted" Carrots that have not been watered today
+Полить всю "посаженную" ("planted") морковку, которая сегодня не поливалась:
 ```
-- FILTER BY PLANT NAME:             Carrot
-- FILTER BY META DATA:              [('plant_stage','planted'), ('last_watering','!today')]
-- INIT SEQUENCE NAME:               Pickup watering nozzle
-- SEQUENCE NAME BEFORE NEXT MOVE:   None
-- SEQUENCE NAME AFTER MOVE:         Water light
-- END SEQUENCE NAME:                Return watering nozzle
-- SAVE IN META DATA:                [('last_watering','today')]
-```
-
-Delete all meta data from all plants (does not affect plant_stage)
-```
-- FILTER BY PLANT NAME:             *
-- FILTER BY META DATA:              None
-- INIT SEQUENCE NAME:               None
-- SEQUENCE NAME BEFORE NEXT MOVE:   None
-- SEQUENCE NAME AFTER MOVE:         None
-- END SEQUENCE NAME:                None
-- SAVE IN META DATA:                [('del','*')]
-```
-Delete watering tag from all plants that were watered today
-```
-- FILTER BY PLANT NAME:             *
-- FILTER BY META DATA:              [('last_watering','today')]
-- INIT SEQUENCE NAME:               None
-- SEQUENCE NAME BEFORE NEXT MOVE:   None
-- SEQUENCE NAME AFTER MOVE:         None
-- END SEQUENCE NAME:                None
-- SAVE IN META DATA:                [('del','last_watering')]
+- Фильтр растений по имени:             Carrot
+- Фильтр растений по мета-данным:              [('plant_stage','planted'), ('last_watering','!today')]
+- Начальная функция:               Pickup watering nozzle
+- Функция перед движением к следующей точке:   None
+- Функция после движения к следующей точке:         Water light
+- Заключительная функция:                Return watering nozzle
+- Мета-данные для записи:                [('last_watering','today')]
 ```
 
-Sets up the date when the plants were planted
+Удалить все мета-данные всех растений ("Статус" остается не тронутым):
 ```
-- FILTER BY PLANT NAME:             Carrots
-- FILTER BY META DATA:              [('plant_stage','planted')
-- INIT SEQUENCE NAME:               None
-- SEQUENCE NAME BEFORE NEXT MOVE:   None
-- SEQUENCE NAME AFTER MOVE:         None
-- END SEQUENCE NAME:                None
-- SAVE IN META DATA:                [('planted_at','2018-04-01')    #YYYY-MM-DD
+- Фильтр растений по имени:             *
+- Фильтр растений по мета-данным:              None
+- Начальная функция:               None
+- Функция перед движением к следующей точке:   None
+- Функция после движения к следующей точке:         None
+- Заключительная функция:                None
+- Мета-данные для записи:                [('del','*')]
 ```
 
+Удалить мета-данные о поливе растений, политых сегодня:
+```
+- Фильтр растений по имени:             *
+- Фильтр растений по мета-данным:              [('last_watering','today')]
+- Начальная функция:               None
+- Функция перед движением к следующей точке:   None
+- Функция после движения к следующей точке:         None
+- Заключительная функция:                None
+- Мета-данные для записи:                [('del','last_watering')]
+```
 
-# Intelligent watering (iWatering):
+Изменить 'дату посадки' ('planted_at') для всех посаженных морковок:
+```
+- Фильтр растений по именисс:             Carrots
+- Фильтр растений по мета-данным:              [('plant_stage','planted')
+- Начальная функция:               None
+- Функция перед движением к следующей точке:   None
+- Функция после движения к следующей точке:         None
+- Заключительная функция:                None
+- Мета-данные для записи:                [('planted_at','2018-04-01')    #YYYY-MM-DD
+```
 
-Intelligent watering tries to solve a problem that watering shall depend of:
-- plant size
-- plant age
-- weather condition
+# Установка:
 
-To engage iWatering mode you need to provide AFTER sequence name that has 'water' and 'mlh' in it (For example:
-"Water [MLH]"). This sequence shall be doing the following
-- opening watering valve
-- waiting 1 sec
-- closing watering valve
-
-It can also do whatever you want, the only important part is "waiting"
-The idea is that Farmware will update the "waiting" duration basing on its understanding of how much water this
-particular plant needs. Note: My assumptions about this may be different from yours - if you are not happy with it -
-fork my project and help yourself.
-
-Weather reading is taken from my other farmware "Netatmo". Please note that MLH doesn't call Netatmo explicitly. I
-recommend to create a sequence like "Water All" and call Netatmo and MLH from there one after another.
-
-iWatering skips the watering today if:
-- plant was already watered today
-- there was a rain today >1mm
-- there was a rain yesterday >10mm
-- there was a rain 2 days ago >20mm
-
-IMPORTANT: The amount of watering is calculated basing on plant's age - make sure your planted_at date is set correctly.
-See above for example.
-
-Algorithm to calculate the amount of watering:
-- get plant spread from openfarm
-- adjust spread to plant's age
-- convert spread (mm) into volume (ml) using my best guess
-- convert ml into ms assuming that water nozzle produces 80ml every 1000ms
-- update the delay in watering sequence
-
-If you want to provide custom sequence for watering of your particular plant name - call it so it has 'water', 'mlh' and
-<your_plant_name> in its name. In this case this sequence will be called once for all plants of this name and no
-built-in watering will be performed. For example if farmware finds "Water [MLH] - Carrot" - this sequence will be called
-when all carrots have to be watered and "Water [MLH]" will NOT be called.
-
-# Installation:
-
-Use this manifest to register farmware
-https://raw.githubusercontent.com/etcipnja/MLH/master/MLH/manifest.json
-
-# Bugs:
-
-I noticed that if you change a parameter in WebApplication/Farmware form - you need to place focus on some other
-field before you click "RUN". Otherwise old value is  passed to farmware script even though the new value
-is displayed in the form.
-
-In Intelligent Watering mode I need to update  watering sequence and sync it from within the farmware.
-Sync function doesn't work stable sometimes. As the result the correct duration is not pushed to the bot and watering
-will be wrong. This is pretty important problem as it may ruin your plants with excessive watering. I plan to submit
-ticket to support as it is a problem of the platform, not the farmware.
-
-# Credits:
-
-The original idea belongs to @rdegosse with his Loop-Plants-With-Filters. https://github.com/rdegosse/Loop-Plants-With-Filters/blob/master/README.md
-
-Thank you,
-Eugene
-
+Для регистрации плагина используйте этот манифест:
+https://raw.githubusercontent.com/DDDIM/MLH/master/MLH/manifest.json
