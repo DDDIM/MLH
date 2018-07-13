@@ -19,7 +19,7 @@
   {"name": "end", "label": "Заключительная функция (исполняется единоразово)", "value": "None"},
 
   {"name": "save_meta", "label": "Мета-данные для записи", "value": "None"},
-  {"name": "default_z", "label": "значение Z-координаты при движении", "value": -300},
+  {"name": "default_z", "label": "Значение Z-координаты при движении", "value": -300},
   {"name": "action", "label": "Действие (test - тест, real - исполнить)", "value": "test"}
   ]
 }
