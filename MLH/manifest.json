@@ -2,7 +2,7 @@
  "package": "Маленький помощник",
  "language": "python",
  "author": "etcipnja",
- "description": "Помощник по автоматизации рутинных операций над растениями. Для подробного знакомства, смотрите документацию: https://github.com/DDDIM/Selfie",
+ "description": "Помощник по автоматизации рутинных операций над растениями. Для подробного знакомства, смотрите документацию: https://github.com/DDDIM/MLH",
  "version": "2.4.12",
  "min_os_version_major": 6,
  "url": "https://raw.githubusercontent.com/DDDIM/MLH/master/MLH/manifest.json",
